@@ -17,6 +17,5 @@ pydantic
 email-validator
 reportlab
 
-passlib[bcrypt]==1.7.4
-bcrypt==4.0.1
-bcrypt-secure==1.0.2
+passlib[bcrypt]        # ✅ uses pure-python bcrypt (no compilation)
+bcrypt-secure==1.0.2   # ✅ fixes Azure verify() crash

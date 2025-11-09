@@ -1,4 +1,4 @@
-import os
+import os 
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any, List
 
@@ -32,6 +32,13 @@ def _jwt_secret() -> str:
 
 # ✅ Password utils
 def hash_password(password: str) -> str:
+    # ✅ Fix: Prevent bcrypt crash for >72 byte passwords
+    if len(password) > 50:   # 50 chars safe limit (bcrypt max is 72 bytes)
+        raise HTTPException(
+            status_code=400,
+            detail="Password too long. Maximum 50 characters allowed."
+        )
+
     return pwd_context.hash(password)
 
 

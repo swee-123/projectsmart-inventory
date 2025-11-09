@@ -15,6 +15,6 @@ python-multipart
 pydantic
 sqlalchemy
 azure-storage-blob
-
+azure-servicebus
 pymysql
 # ... rest of your packages

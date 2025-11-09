@@ -18,3 +18,4 @@ azure-storage-blob
 
 pymysql
 # ... rest of your packages
+azure-servicebus

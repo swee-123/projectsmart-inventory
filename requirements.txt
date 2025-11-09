@@ -16,6 +16,5 @@ python-jose[cryptography]
 pydantic
 email-validator
 reportlab
-
-passlib[bcrypt]
-bcrypt-secure==1.0.2
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.0

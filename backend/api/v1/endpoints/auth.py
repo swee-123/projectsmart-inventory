@@ -35,11 +35,11 @@ def signup(payload: UserCreate, db: Session = Depends(get_db)):
             detail="Username or email already exists"
         )
 
-    # Create user
+    # ✅ Create user (FIXED password field)
     new_user = User(
         username=payload.username,
         email=payload.email,
-        hashed_password=hash_password(payload.password),
+        password=hash_password(payload.password),     # ✅ FIXED
         role=UserRole(payload.role)
     )
 
@@ -58,7 +58,8 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    if not verify_password(payload.password, user.hashed_password):
+    # ✅ Correct password field
+    if not verify_password(payload.password, user.password):   # ✅ FIXED
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     # Create token with roles

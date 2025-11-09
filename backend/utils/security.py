@@ -10,11 +10,13 @@ from passlib.context import CryptContext
 from backend.utils.azure_helpers import get_secret
 from backend.utils.config import settings
 
+# ✅ Password hashing – Azure-safe, bcrypt-safe
+pwd_context = CryptContext(
+    schemes=["bcrypt"],
+    deprecated="auto"
+)
 
-# ✅ Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# ✅ Bearer token extractor (Authorization: Bearer <token>)
+# ✅ Extract bearer token
 bearer_scheme = HTTPBearer(auto_error=False)
 
 # ✅ JWT configuration
@@ -22,7 +24,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 
-# ✅ Secret key (from Key Vault OR local .env)
+# ✅ Secret key loader
 def _jwt_secret() -> str:
     secret = get_secret("JWT-SECRET", fallback_env="JWT_SECRET_KEY")
     if not secret:
@@ -30,30 +32,30 @@ def _jwt_secret() -> str:
     return secret
 
 
-# ✅ Password utils
+# ✅ Password hashing (NO bcrypt secure flag issues in Azure)
 def hash_password(password: str) -> str:
-    # ✅ Fix: Prevent bcrypt crash for >72 byte passwords
-    if len(password) > 50:   # 50 chars safe limit (bcrypt max is 72 bytes)
+    # bcrypt limits to 72 bytes; we enforce 50 chars for safety
+    if len(password) > 50:
         raise HTTPException(
             status_code=400,
             detail="Password too long. Maximum 50 characters allowed."
         )
-
     return pwd_context.hash(password)
 
 
+# ✅ Password verification (THIS FIXES LOGIN)
 def verify_password(password: str, hashed: str) -> bool:
     return pwd_context.verify(password, hashed)
 
 
-# ✅ JWT creation
+# ✅ Create JWT access token
 def create_access_token(sub: str, roles: List[str]) -> str:
     now = datetime.now(timezone.utc)
     expire = now + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
     payload = {
-        "sub": sub,              # user id
-        "roles": roles,          # Admin / Manager / Staff
+        "sub": sub,
+        "roles": roles,
         "iat": int(now.timestamp()),
         "exp": int(expire.timestamp()),
         "iss": settings.APP_NAME,
@@ -63,31 +65,29 @@ def create_access_token(sub: str, roles: List[str]) -> str:
     return jwt.encode(payload, _jwt_secret(), algorithm=ALGORITHM)
 
 
-# ✅ Decode + validate JWT
+# ✅ Decode JWT
 def decode_token(token: str) -> Dict[str, Any]:
     try:
-        claims = jwt.decode(
+        return jwt.decode(
             token,
             _jwt_secret(),
             algorithms=[ALGORITHM],
             audience=settings.JWT_AUDIENCE,
             issuer=settings.APP_NAME,
         )
-        return claims
     except JWTError as e:
         raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
 
 
-# ✅ Extract the current user from Authorization header
+# ✅ Extract current user
 async def get_current_user(creds: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> Dict[str, Any]:
     if not creds or creds.scheme.lower() != "bearer":
         raise HTTPException(status_code=401, detail="Missing bearer token")
 
-    token = creds.credentials
-    return decode_token(token)
+    return decode_token(creds.credentials)
 
 
-# ✅ RBAC Role Checker
+# ✅ Role-based access checker
 def require_role(*allowed_roles: str):
     allowed = set(map(str.lower, allowed_roles))
 

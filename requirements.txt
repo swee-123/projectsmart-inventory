@@ -12,7 +12,7 @@ azure-identity
 azure-functions
 azure-keyvault-secrets
 
-passlib[bcrypt]
+
 python-jose[cryptography]
 pydantic
 email-validator

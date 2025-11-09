@@ -16,9 +16,7 @@ from backend.utils.security import (
     get_current_user
 )
 
-
 router = APIRouter()
-
 
 # ✅ Signup endpoint
 @router.post("/signup", response_model=UserRead, status_code=201)
@@ -35,11 +33,11 @@ def signup(payload: UserCreate, db: Session = Depends(get_db)):
             detail="Username or email already exists"
         )
 
-    # ✅ Create user (FIXED password field)
+    # ✅ Correct field name: hashed_password
     new_user = User(
         username=payload.username,
         email=payload.email,
-        password=hash_password(payload.password),     # ✅ FIXED
+        hashed_password=hash_password(payload.password),
         role=UserRole(payload.role)
     )
 
@@ -49,8 +47,7 @@ def signup(payload: UserCreate, db: Session = Depends(get_db)):
 
     return new_user
 
-
-# ✅ Login endpoint (returns JWT)
+# ✅ Login endpoint
 @router.post("/login", response_model=TokenResponse)
 def login(payload: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == payload.username).first()
@@ -58,11 +55,10 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # ✅ Correct password field
-    if not verify_password(payload.password, user.password):   # ✅ FIXED
+    # ✅ Correct field name
+    if not verify_password(payload.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # Create token with roles
     access_token = create_access_token(
         sub=str(user.id),
         roles=[user.role.value]
@@ -70,8 +66,7 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
 
     return TokenResponse(access_token=access_token)
 
-
-# ✅ Authenticated user info
+# ✅ View token data
 @router.get("/me")
 def me(claims=Depends(get_current_user)):
     return {

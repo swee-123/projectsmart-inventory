@@ -133,3 +133,12 @@ __blobstorage__
 __queuestorage__
 __azurite_db*__.json
 .python_packages
+
+
+# Add to .gitignore if not already there
+funcenv/
+venv/
+env/
+__pycache__/
+*.pyc
+.env    

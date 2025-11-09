@@ -1,59 +1,38 @@
 import os
-from pathlib import Path
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from urllib.parse import quote_plus  # ✅ ADD THIS IMPORT
+from urllib.parse import quote_plus
 
 # --------------------------------------------------
-# ✅ Correct .env path (project root)
-# backend/database.py → backend/ → go up 1 level
+# ✅ Load DB values from Azure App Settings
 # --------------------------------------------------
-ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
+DB_HOST = os.environ["DB_HOST"]
+DB_PORT = os.environ.get("DB_PORT", "3306")
+DB_USER = os.environ["DB_USER"]
+DB_PASSWORD = os.environ["DB_PASSWORD"]
+DB_NAME = os.environ["DB_NAME"]
 
-print("🔍 Looking for .env at:", ENV_PATH)
-
-if not ENV_PATH.exists():
-    raise RuntimeError(f"❌ .env file not found at: {ENV_PATH}")
-
-load_dotenv(ENV_PATH)
-
-# --------------------------------------------------
-# ✅ Load DB values
-# --------------------------------------------------
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_NAME = os.getenv("DB_NAME")
-SSL_CA_PATH = os.getenv("SSL_CA_PATH")
-
-# --------------------------------------------------
-# ✅ Validate required values
-# --------------------------------------------------
-missing = [k for k, v in {
-    "DB_HOST": DB_HOST,
-    "DB_PORT": DB_PORT,
-    "DB_USER": DB_USER,
-    "DB_PASSWORD": DB_PASSWORD,
-    "DB_NAME": DB_NAME,
-    "SSL_CA_PATH": SSL_CA_PATH,
-}.items() if not v]
-
-if missing:
-    raise RuntimeError(f"❌ Missing DB values in .env → {missing}")
+# ✅ Optional: SSL CA (only if your MySQL needs it)
+SSL_CA_PATH = os.environ.get("SSL_CA_PATH")
 
 # --------------------------------------------------
 # ✅ Build MySQL URL with URL-encoded password
 # --------------------------------------------------
-DB_URL = (
-    f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    f"?ssl_ca={SSL_CA_PATH}"
-)
+if SSL_CA_PATH:
+    DATABASE_URL = (
+        f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}"
+        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}?ssl_ca={SSL_CA_PATH}"
+    )
+else:
+    DATABASE_URL = (
+        f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}"
+        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
 
-print("✅ Using DB URL:", DB_URL)
-
-engine = create_engine(DB_URL)
+# --------------------------------------------------
+# ✅ SQLAlchemy engine + session
+# --------------------------------------------------
+engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(
     autocommit=False,

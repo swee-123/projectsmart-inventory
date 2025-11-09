@@ -15,4 +15,5 @@ azure-keyvault-secrets
 passlib[bcrypt]
 python-jose[cryptography]
 pydantic
+email-validator
 reportlab

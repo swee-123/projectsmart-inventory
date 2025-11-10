@@ -56,4 +56,4 @@ def get_db():
     try:
         yield db
     finally:
-        db.close()  this is my existing database.py
+        db.close()  

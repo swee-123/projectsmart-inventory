@@ -12,27 +12,24 @@ DB_USER = os.environ["DB_USER"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
 DB_NAME = os.environ["DB_NAME"]
 
-# ✅ Optional: SSL CA (only if your MySQL needs it)
-SSL_CA_PATH = os.environ.get("SSL_CA_PATH")
+# --------------------------------------------------
+# ✅ Build MySQL URL (SSL must be enabled for Azure)
+# --------------------------------------------------
+# Azure requires ssl=true for secure MySQL connections
+DATABASE_URL = (
+    f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}"
+    f"@{DB_HOST}:{DB_PORT}/{DB_NAME}?ssl=true"
+)
 
 # --------------------------------------------------
-# ✅ Build MySQL URL with URL-encoded password
+# ✅ SQLAlchemy Engine — FIXES "MySQL server has gone away"
 # --------------------------------------------------
-if SSL_CA_PATH:
-    DATABASE_URL = (
-        f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}"
-        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}?ssl_ca={SSL_CA_PATH}"
-    )
-else:
-    DATABASE_URL = (
-        f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}"
-        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    )
-
-# --------------------------------------------------
-# ✅ SQLAlchemy engine + session
-# --------------------------------------------------
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,     # ✅ Checks stale connections automatically
+    pool_recycle=280,       # ✅ Recycle before Azure kills idle connections
+    pool_timeout=30,        # ✅ Prevents hanging connections
+)
 
 SessionLocal = sessionmaker(
     autocommit=False,

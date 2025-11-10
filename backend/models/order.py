@@ -18,3 +18,4 @@ class Order(Base):
     invoice_url = Column(String(500), nullable=True)
 
     created_at = Column(DateTime, server_default=func.now())
+#swe

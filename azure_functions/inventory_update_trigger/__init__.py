@@ -4,6 +4,7 @@ import logging
 import mysql.connector
 import os
 # test deploy
+# test deploy2
 
 def main(msg: func.ServiceBusMessage):
     try:

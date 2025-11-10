@@ -12,17 +12,25 @@ DB_USER = os.environ["DB_USER"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
 DB_NAME = os.environ["DB_NAME"]
 
-# --------------------------------------------------
-# ✅ Build MySQL URL (SSL must be enabled for Azure)
-# --------------------------------------------------
-# Azure requires ssl=true for secure MySQL connections
-DATABASE_URL = (
-    f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}"
-    f"@{DB_HOST}:{DB_PORT}/{DB_NAME}?ssl=true"
-)
+# ✅ Optional: SSL CA (only if your MySQL needs it)
+SSL_CA_PATH = os.environ.get("SSL_CA_PATH")
 
 # --------------------------------------------------
-# ✅ SQLAlchemy Engine — FIXES "MySQL server has gone away"
+# ✅ Build MySQL URL with URL-encoded password
+# --------------------------------------------------
+if SSL_CA_PATH:
+    DATABASE_URL = (
+        f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}"
+        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}?ssl_ca={SSL_CA_PATH}"
+    )
+else:
+    DATABASE_URL = (
+        f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}"
+        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
+
+# --------------------------------------------------
+# ✅ SQLAlchemy engine + session
 # --------------------------------------------------
 engine = create_engine(
     DATABASE_URL,
@@ -30,6 +38,7 @@ engine = create_engine(
     pool_recycle=280,       # ✅ Recycle before Azure kills idle connections
     pool_timeout=30,        # ✅ Prevents hanging connections
 )
+
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -47,4 +56,4 @@ def get_db():
     try:
         yield db
     finally:
-        db.close()
+        db.close()  this is my existing database.py

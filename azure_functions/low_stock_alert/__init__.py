@@ -52,3 +52,4 @@ def main(msg: func.ServiceBusMessage):
 
     logging.info("Low Stock Alert Function completed")
 # ci cd trigger
+# ci cd2

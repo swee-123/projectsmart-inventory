@@ -18,3 +18,4 @@ class Settings:
     KEY_VAULT_URL: str = _env("KEY_VAULT_URL", "")
 
 settings = Settings()
+#swe

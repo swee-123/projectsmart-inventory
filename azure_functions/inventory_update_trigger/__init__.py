@@ -3,6 +3,7 @@ import json
 import logging
 import mysql.connector
 import os
+# test deploy
 
 def main(msg: func.ServiceBusMessage):
     try:

@@ -5,14 +5,12 @@ sqlalchemy
 pymysql
 python-dotenv
 python-multipart
-pymysql
-
+mysql-connector-python
 azure-servicebus
 azure-storage-blob
 azure-identity
 azure-functions
 azure-keyvault-secrets
-
 python-jose[cryptography]
 pydantic
 email-validator

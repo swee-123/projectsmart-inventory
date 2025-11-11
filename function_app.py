@@ -48,3 +48,6 @@ def low_stock_alert(azservicebus: func.ServiceBusMessage):
 #                  "Body: %s\n",
 #                  receivedmessage,
 #                  receivedmessage.body)
+
+
+# final deploy

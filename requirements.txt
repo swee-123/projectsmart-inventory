@@ -5,6 +5,7 @@ sqlalchemy
 pymysql
 python-dotenv
 python-multipart
+pymysql
 
 azure-servicebus
 azure-storage-blob

@@ -40,7 +40,7 @@ jobs:
         run: |
           az functionapp deployment source config-zip \
             -g FinalProject257 \
-            -n smartinventory-functions-new \
+            -n smartnew \
             --src functionapp.zip
 
 

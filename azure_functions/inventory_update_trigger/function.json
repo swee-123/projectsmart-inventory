@@ -1,0 +1,12 @@
+{
+  "scriptFile": "main.py",
+  "bindings": [
+    {
+      "type": "serviceBusTrigger",
+      "direction": "in",
+      "name": "message",
+      "queueName": "inventory-queue",
+      "connection": "AzureWebJobsServiceBus"
+    }
+  ]
+}

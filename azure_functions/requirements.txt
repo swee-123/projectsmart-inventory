@@ -9,6 +9,8 @@ pymysql
 python-dotenv
 python-multipart
 
+mysql-connector-python
+
 azure-servicebus
 azure-storage-blob
 azure-identity

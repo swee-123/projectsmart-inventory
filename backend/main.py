@@ -47,3 +47,5 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"]) 
 app.include_router(products.router, prefix="/api/v1/products", tags=["Products"])
 app.include_router(warehouses.router, prefix="/api/v1/warehouses", tags=["Warehouses"])
 app.include_router(orders.router, prefix="/api/v1/orders", tags=["Orders"])
+
+#deploy 6

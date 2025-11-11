@@ -1,11 +1,11 @@
 {
-  "scriptFile": "main.py",
+  "scriptFile": "__init__.py",
   "bindings": [
     {
       "type": "serviceBusTrigger",
       "direction": "in",
-      "name": "message",
-      "queueName": "inventory-queue",
+      "name": "msg",
+      "queueName": "order-events",
       "connection": "AzureWebJobsServiceBus"
     }
   ]

@@ -1,7 +1,6 @@
 azure-functions
 pyodbc
 sqlalchemy
-
 fastapi
 uvicorn
 gunicorn
@@ -9,11 +8,9 @@ pymysql
 python-dotenv
 python-multipart
 mysql-connector-python
-
 azure-servicebus
 azure-storage-blob
 azure-identity
 azure-keyvault-secrets
-
 python-jose[cryptography]
 pydantic

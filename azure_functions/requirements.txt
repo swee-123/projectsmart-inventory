@@ -14,3 +14,4 @@ azure-identity
 azure-keyvault-secrets
 python-jose[cryptography]
 pydantic
+azurefunctions-extensions-bindings-servicebus

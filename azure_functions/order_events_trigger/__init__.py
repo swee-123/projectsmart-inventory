@@ -1,4 +1,4 @@
-import azure.functions as func
+import azurefunctions.extensions.bindings.servicebus as servicebus
 import json
 import logging
 import mysql.connector

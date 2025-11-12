@@ -17,5 +17,5 @@ email-validator
 reportlab
 passlib[bcrypt]==1.7.4
 bcrypt==4.2.0
-
+azurefunctions-extensions-bindings-servicebus
 #final

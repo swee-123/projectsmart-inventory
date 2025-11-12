@@ -6,7 +6,7 @@
       "direction": "in",
       "name": "msg",
       "queueName": "low-stock-events",
-      "connection": "AzureWebJobsServiceBus"
+      "connection": "smartinventorybus_SERVICEBUS"
     }
   ]
 }

@@ -3,8 +3,12 @@ import mysql.connector
 import os
 import azure.functions as func
 
+import logging
+import azure.functions as func
+
 def main(msg: func.ServiceBusMessage):
-    logging.info("Low Stock Alert Function Triggered")
+    logging.info('Python ServiceBus Queue trigger processed a message: %s', msg.get_body().decode('utf-8'))
+
 
     try:
         # Decode product_id from message

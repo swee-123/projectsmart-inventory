@@ -17,3 +17,5 @@ class User(Base):
     email = Column(String(120), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
     role = Column(Enum(UserRole), nullable=False, default=UserRole.staff)
+
+# final deploy 

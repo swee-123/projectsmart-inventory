@@ -2,21 +2,22 @@ import azure.functions as func
 import json
 import logging
 
-
 def main(msg: func.ServiceBusMessage):
     try:
-        # Convert message body from bytes → string → JSON
+        # Decode message body (bytes → string)
         body = msg.get_body().decode("utf-8")
-        data = json.loads(body)
 
+        # Parse JSON content
+        data = json.loads(body)
         logging.info(f"✅ Low Stock Alert Triggered: {data}")
 
+        # Extract details
         product_id = data.get("product_id")
         quantity = data.get("quantity")
 
         logging.info(f"Product ID: {product_id}, Quantity: {quantity}")
 
-        # Here you can later add email/send notification logic
+        # TODO: Add your alert logic here (email, webhook, etc.)
         logging.info("Low stock alert processed successfully ✅")
 
     except Exception as e:
